@@ -57,20 +57,22 @@ python monitor_cnd.py
 
 
 ## 📂 Estrutura do Repositório
+
+```
 📦 CND-Tracker
  ┣ 📜 monitor_cnd.py        # Script principal com a lógica de automação
  ┣ 📜 .gitignore            # Bloqueio de segurança para dados sensíveis (planilhas)
  ┗ 📜 README.md             # Documentação do projeto
- 
-_Nota: O arquivo clientes_cnd.xlsx não é versionado por motivos de LGPD e segurança da informação._
+```
+
+> ⚠️ _O arquivo `clientes_cnd.xlsx` não é versionado por motivos de LGPD e segurança da informação._
 
 
 
 ## 📈 Backlog & Próximos Passos (Roadmap)
+
 Como um projeto em evolução, as seguintes melhorias estão mapeadas para futuras iterações:
 
-    [ ] Implementação de notificações automáticas por E-mail usando smtplib.
-
-    [ ] Transição da fonte de dados de .xlsx para um banco de dados relacional.
-
-    [ ] Criação de um dashboard visual para acompanhamento dos status.
+- [ ] Implementação de notificações automáticas por E-mail usando `smtplib`.
+- [ ] Transição da fonte de dados de `.xlsx` para um banco de dados relacional.
+- [ ] Criação de um dashboard visual para acompanhamento dos status.
