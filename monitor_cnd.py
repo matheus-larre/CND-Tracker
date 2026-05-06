@@ -1,58 +1,35 @@
-import pandas as pd
-import datetime
+# monitor_cnd.py
+# Ponto de entrada da aplicação. Função: ORQUESTRAR.
+# Não tem lógica de negócio — apenas chama os serviços na ordem certa.
 
-def verificar_vencimentos_excel():
-    hoje = datetime.datetime.today()
-    alerta_dias = 15
+from services.data_service  import carregar_clientes, salvar_clientes
+from services.rules_service import calcular_status, filtrar_criticos
+from services.email_service import enviar_alerta
 
-    print("="*60)
-    print("SISTEMA DE MONITORAMENTO DE CNDs - LEITURA E GRAVAÇÃO")
-    print("="*60)
+def main():
+    print("=" * 50)
+    print("  CND-Tracker — Iniciando monitoramento...")
+    print("=" * 50)
 
-    try:
-        # Lê a planilha do Excel
-        df = pd.read_excel('clientes_cnd.xlsx')
-        df['Vencimento'] = pd.to_datetime(df['Vencimento'])
-        
-        # Cria a coluna 'Status' se ela ainda não existir na planilha
-        if 'Status' not in df.columns:
-            df['Status'] = ''
+    # 1. Carregar dados
+    df = carregar_clientes()
 
-        for index, row in df.iterrows():
-            nome = row['Nome']
-            cnpj = row['CNPJ']
-            vencimento = row['Vencimento']
+    # 2. Aplicar regras de negócio
+    df = calcular_status(df)
 
-            # Calcula os dias restantes
-            dias_restantes = (vencimento - hoje).days
+    # 3. Exibir resumo no terminal
+    print(df[["Nome", "Vencimento", "Dias Restantes", "Status"]].to_string(index=False))
 
-            # Define a mensagem de status e imprime no terminal
-            if dias_restantes < 0:
-                status = f"VENCEU há {abs(dias_restantes)} dias"
-                print(f"[URGENTE] {cnpj} | {nome} | {status}")
-            elif dias_restantes <= alerta_dias:
-                status = f"Vence em {dias_restantes} dias"
-                print(f"[ALERTA]  {cnpj} | {nome} | {status}")
-            else:
-                status = "Regular"
-                print(f"[OK]      {cnpj} | {nome} | {status} ({dias_restantes} dias restantes)")
-            
-            # Grava o status na linha correspondente dentro do DataFrame (memória)
-            df.at[index, 'Status'] = status
+    # 4. Persistir resultados
+    salvar_clientes(df)
 
-        # Salva o DataFrame atualizado de volta no arquivo Excel
-        # index=False evita que o pandas crie uma coluna extra de numeração
-        df.to_excel('clientes_cnd.xlsx', index=False)
-        
-        print("-" * 60)
-        print("Planilha 'clientes_cnd.xlsx' atualizada e salva com sucesso!")
-                
-    except FileNotFoundError:
-        print("[ERRO] O arquivo 'clientes_cnd.xlsx' não foi encontrado.")
-    except Exception as e:
-        print(f"[ERRO] Ocorreu um problema: {e}")
+    # 5. Notificar sobre críticos
+    df_criticos = filtrar_criticos(df)
+    enviar_alerta(df_criticos)
 
-    print("="*60)
+    print("=" * 50)
+    print("  Monitoramento concluído.")
+    print("=" * 50)
 
 if __name__ == "__main__":
-    verificar_vencimentos_excel()
+    main()

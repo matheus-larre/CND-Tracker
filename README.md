@@ -5,74 +5,88 @@
 ![Excel](https://img.shields.io/badge/Microsoft_Excel-217346?style=for-the-badge&logo=microsoft-excel&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Operacional-success?style=for-the-badge)
 
-## 🎯 O Problema
-No ambiente contábil e financeiro, a perda do prazo de validade de uma Certidão Negativa de Débitos (CND) pode resultar em desenquadramentos tributários graves (como a exclusão do Simples Nacional) e retenções de pagamentos. O controle manual em planilhas exige muito tempo e é suscetível a falhas humanas.
+Gestor automatizado de vencimentos de Certidões Negativas de Débitos (CND).
 
-## 💡 A Solução
-O **CND Tracker** é uma automação em Python desenvolvida para mitigar o risco de conformidade fiscal. O script ingere a base de clientes a partir de arquivos `.xlsx`, processa as datas de vencimento em frações de segundo, alerta via terminal quais documentos estão em risco e escreve o status atualizado de volta na planilha de forma autônoma.
+## Problema
 
----
+No setor contábil, perder o prazo de uma CND pode causar a exclusão de clientes
+do Simples Nacional. O controle manual em planilhas é ineficiente e propenso a erros.
 
-## ⚙️ Funcionalidades
-- **Leitura Otimizada:** Ingestão de dados via biblioteca `pandas`.
-- **Análise Lógica:** Cálculo em tempo real da diferença entre a data atual e o vencimento do documento.
-- **Alertas Dinâmicos:** Classificação de status em três níveis:
-  - 🔴 `URGENTE` (Vencido)
-  - 🟡 `ALERTA` (Vence em menos de 15 dias)
-  - 🟢 `OK` (Regular)
-- **Escrita Automatizada:** Atualização do arquivo Excel com os novos status sem intervenção manual.
+## Solução
 
----
+Automação em Python que lê uma base de clientes em Excel, classifica os vencimentos
+por nível de risco e envia alertas automáticos por e-mail para a equipe contábil.
 
-## 🚀 Como Executar o Projeto
+## Stack
 
-### Pré-requisitos
-Certifique-se de ter o Python instalado e o instalador de pacotes `pip` disponível.
+- Python 3.13
+- pandas, openpyxl — leitura e escrita de planilhas
+- smtplib, email — envio de notificações (nativo Python)
+- python-dotenv — gerenciamento seguro de credenciais
 
-1. Clone o repositório:
-```bash
-git clone [https://github.com/SEU-USUARIO/CND-Tracker.git](https://github.com/SEU-USUARIO/CND-Tracker.git)
-cd CND-Tracker
+## Estrutura do Projeto
+
+```
+cnd-tracker/
+├── monitor_cnd.py          # Ponto de entrada — orquestra os serviços
+├── config.py               # Configurações centralizadas (thresholds, caminhos)
+├── services/
+│   ├── data_service.py     # I/O de dados (Excel)
+│   ├── rules_service.py    # Regras de negócio (cálculo de status)
+│   └── email_service.py    # Envio de notificações por e-mail
+├── .env.example            # Modelo de variáveis de ambiente
+├── .gitignore
+└── requirements.txt
 ```
 
-2. Instale as dependências necessárias:
+## Regras de Negócio
+
+| Status | Critério |
+|---|---|
+| 🔴 URGENTE | CND vencida (dias restantes < 0) |
+| 🟡 ALERTA | Vence em até 15 dias |
+| 🟢 OK | Vence em mais de 15 dias |
+
+## Como Executar
+
+### 1. Clone o repositório
 ```bash
-pip install pandas openpyxl
+git clone https://github.com/seu-usuario/cnd-tracker.git
+cd cnd-tracker
 ```
-3. Configure sua base de dados:
-Crie um arquivo chamado `clientes_cnd.xlsx` na raiz do projeto com as seguintes colunas obrigatórias na linha 1:
 
-- Nome
+### 2. Instale as dependências
+```bash
+pip install -r requirements.txt
+```
 
-- CNPJ
+### 3. Configure as variáveis de ambiente
+```bash
+cp .env.example .env
+# Edite o .env com suas credenciais
+```
 
-- Vencimento (formato data)
-
-
-4. Execute a automação:
+### 4. Execute
 ```bash
 python monitor_cnd.py
 ```
 
+## Configuração do .env
 
+Crie um arquivo `.env` na raiz do projeto baseado no `.env.example`:
 
-## 📂 Estrutura do Repositório
-
+```env
+EMAIL_REMETENTE=seu_email@gmail.com
+EMAIL_APP_PASSWORD=sua_app_password_sem_espacos
+EMAIL_DESTINATARIO=destinatario@email.com
 ```
-📦 CND-Tracker
- ┣ 📜 monitor_cnd.py        # Script principal com a lógica de automação
- ┣ 📜 .gitignore            # Bloqueio de segurança para dados sensíveis (planilhas)
- ┗ 📜 README.md             # Documentação do projeto
-```
 
-> ⚠️ _O arquivo `clientes_cnd.xlsx` não é versionado por motivos de LGPD e segurança da informação._
+> O Gmail exige uma **App Password** (não sua senha normal).
+> Gere em: https://myaccount.google.com/apppasswords
 
+## Roadmap
 
+- [x] **Etapa A** — Notificações automáticas por e-mail (smtplib)
+- [ ] **Etapa B** — Migração para banco de dados relacional (SQLite → PostgreSQL)
+- [ ] **Etapa C** — Dashboard / interface gráfica de acompanhamento
 
-## 📈 Backlog & Próximos Passos (Roadmap)
-
-Como um projeto em evolução, as seguintes melhorias estão mapeadas para futuras iterações:
-
-- [ ] Implementação de notificações automáticas por E-mail usando `smtplib`.
-- [ ] Transição da fonte de dados de `.xlsx` para um banco de dados relacional.
-- [ ] Criação de um dashboard visual para acompanhamento dos status.
