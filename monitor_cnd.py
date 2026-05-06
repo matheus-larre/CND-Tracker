@@ -1,38 +1,42 @@
+import pandas as pd
 import datetime
 
-# Base de dados simulada (Na Fase 2, faremos isso ler do seu Excel)
-clientes = [
-    {
-        "nome": "Cliente Jaboatão (Lucro Presumido)", 
-        "cnpj": "12.345.678/0001-90", 
-        "vencimento_cnd": "2026-05-10" # Data próxima ao vencimento
-    },
-    {
-        "nome": "Clínica Saúde LTDA (Simples Nacional)", 
-        "cnpj": "98.765.432/0001-10", 
-        "vencimento_cnd": "2026-08-20"
-    }
-]
+def verificar_vencimentos_excel():
+    hoje = datetime.datetime.today()
+    alerta_dias = 15
 
-def verificar_vencimentos():
-    hoje = datetime.date.today()
-    alerta_dias = 15 # Configuração: Avisar com 15 dias de antecedência
+    print("="*55)
+    print("SISTEMA DE MONITORAMENTO DE CNDs - INTEGRAÇÃO EXCEL")
+    print("="*55)
 
-    print("="*45)
-    print("SISTEMA DE MONITORAMENTO DE CNDs - STATUS")
-    print("="*45)
+    try:
+        # Lê a planilha do Excel
+        df = pd.read_excel('clientes_cnd.xlsx')
 
-    for cliente in clientes:
-        vencimento = datetime.datetime.strptime(cliente["vencimento_cnd"], "%Y-%m-%d").date()
-        dias_restantes = (vencimento - hoje).days
+        # Converte a coluna 'Vencimento' para o formato datetime do pandas
+        df['Vencimento'] = pd.to_datetime(df['Vencimento'])
 
-        if dias_restantes < 0:
-            print(f"[URGENTE] CNPJ: {cliente['cnpj']} | A CND de '{cliente['nome']}' VENCEU há {abs(dias_restantes)} dias!")
-        elif dias_restantes <= alerta_dias:
-            print(f"[ALERTA] CNPJ: {cliente['cnpj']} | A CND de '{cliente['nome']}' vence em {dias_restantes} dias.")
-        else:
-            print(f"[OK] CNPJ: {cliente['cnpj']} | A CND de '{cliente['nome']}' está regular ({dias_restantes} dias restantes).")
-    print("="*45)
+        for index, row in df.iterrows():
+            nome = row['Nome']
+            cnpj = row['CNPJ']
+            vencimento = row['Vencimento']
+
+            # Calcula os dias restantes
+            dias_restantes = (vencimento - hoje).days
+
+            if dias_restantes < 0:
+                print(f"[URGENTE] CNPJ: {cnpj} | A CND de '{nome}' VENCEU há {abs(dias_restantes)} dias!")
+            elif dias_restantes <= alerta_dias:
+                print(f"[ALERTA] CNPJ: {cnpj} | A CND de '{nome}' vence em {dias_restantes} dias.")
+            else:
+                print(f"[OK] CNPJ: {cnpj} | A CND de '{nome}' está regular ({dias_restantes} dias restantes).")
+                
+    except FileNotFoundError:
+        print("[ERRO] O arquivo 'clientes_cnd.xlsx' não foi encontrado. Verifique se ele está na mesma pasta do script.")
+    except Exception as e:
+        print(f"[ERRO] Ocorreu um problema ao ler os dados: {e}")
+
+    print("="*55)
 
 if __name__ == "__main__":
-    verificar_vencimentos()
+    verificar_vencimentos_excel()
