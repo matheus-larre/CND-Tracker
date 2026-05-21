@@ -5,7 +5,7 @@
 ![Excel](https://img.shields.io/badge/Microsoft_Excel-217346?style=for-the-badge&logo=microsoft-excel&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Operacional-success?style=for-the-badge)
 
-Gestor automatizado de vencimentos de Certidões Negativas de Débitos (CND).
+> Gestor automatizado de vencimentos de Certidões Negativas de Débitos (CND).
 
 ## Problema
 
