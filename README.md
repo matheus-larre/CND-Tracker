@@ -90,3 +90,11 @@ EMAIL_DESTINATARIO=destinatario@email.com
 - [ ] **Etapa B** — Migração para banco de dados relacional (SQLite → PostgreSQL)
 - [ ] **Etapa C** — Dashboard / interface gráfica de acompanhamento
 
+---
+
+## 👨‍💻 Autor
+
+Desenvolvido por **Matheus Larré**
+
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/matheus-larre)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/matheusrlarre/)
