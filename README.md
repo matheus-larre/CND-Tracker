@@ -7,6 +7,7 @@
 
 > Gestor automatizado de vencimentos de Certidões Negativas de Débitos (CND).
 
+
 ## Problema
 
 No setor contábil, perder o prazo de uma CND pode causar a exclusão de clientes
